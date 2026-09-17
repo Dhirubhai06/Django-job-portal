@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Job Portal{% endblock %}</title>
+    <style>
+        :root {
+            --bg: #100b0d;
+            --bg-glow: rgba(220, 38, 38, 0.16);
+            --panel: #1a1215;
+            --panel-strong: #21161a;
+            --text: #fff7f8;
+            --muted: #c9b8bd;
+            --line: #3f252d;
+            --primary: #ef4444;
+            --primary-dark: #dc2626;
+            --primary-soft: #321217;
+            --danger: #dc2626;
+            --danger-dark: #b91c1c;
+            --shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background:
+                linear-gradient(180deg, var(--bg-glow), rgba(16, 11, 13, 0) 330px),
+                var(--bg);
+            color: var(--text);
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.5;
+        }
+
+        a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 180ms ease, transform 180ms ease;
+        }
+
+        a:hover {
+            color: #f87171;
+            text-decoration: underline;
+        }
+
+        .site-header {
+            animation: headerGlow 5s ease-in-out infinite;
+            background: rgba(26, 18, 21, 0.94);
+            border-bottom: 1px solid var(--line);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.22);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .nav {
+            align-items: center;
+            display: flex;
+            gap: 20px;
+            justify-content: space-between;
+            margin: 0 auto;
+            max-width: 1100px;
+            padding: 14px 20px;
+        }
+
+        .brand {
+            color: var(--text);
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 0;
+        }
+
+        .brand:hover {
+            color: #fecaca;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            align-items: center;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .nav-links a:not(.button) {
+            color: var(--muted);
+            font-weight: 700;
+        }
+
+        .nav-links a:not(.button):hover {
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .nav-user,
+        .muted {
+            color: var(--muted);
+        }
+
+        .logout-form,
+        .inline-form {
+            margin: 0;
+        }
+
+        .container {
+            animation: pageEnter 420ms ease both;
+            margin: 0 auto;
+            max-width: 1100px;
+            padding: 32px 20px;
+        }
+
+        .page-head {
+            align-items: flex-start;
+            display: flex;
+            gap: 16px;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .page-head h1 {
+            font-size: 32px;
+            line-height: 1.2;
+            margin: 0;
+            text-shadow: 0 10px 30px rgba(220, 38, 38, 0.16);
+        }
+
+        .page-head p {
+            margin: 6px 0 0;
+        }
+
+        .grid {
+            display: grid;
+            gap: 16px;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        }
+
+        .panel,
+        .job-card,
+        .empty-state {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            padding: 20px;
+        }
+
+        .job-card {
+            animation: cardEnter 520ms ease both;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            justify-content: space-between;
+            min-height: 230px;
+            transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+        }
+
+        .job-card:hover {
+            border-color: rgba(239, 68, 68, 0.65);
+            box-shadow: 0 22px 60px rgba(220, 38, 38, 0.13);
+            transform: translateY(-4px);
+        }
+
+        .job-card h2,
+        .panel h2 {
+            font-size: 22px;
+            line-height: 1.25;
+            margin: 0 0 6px;
+        }
+
+        .job-card p {
+            margin: 8px 0 0;
+        }
+
+        .card-footer,
+        .actions {
+            align-items: center;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: space-between;
+        }
+
+        .actions {
+            justify-content: flex-start;
+            margin-top: 20px;
+        }
+
+        .card-actions {
+            align-items: center;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .button,
+        button {
+            background: var(--primary);
+            border: 0;
+            border-radius: 6px;
+            color: #ffffff;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font: inherit;
+            font-weight: 700;
+            min-height: 40px;
+            padding: 9px 14px;
+            text-decoration: none;
+            transition: background 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+        }
+
+        .button:hover,
+        button:hover {
+            background: var(--primary-dark);
+            box-shadow: 0 12px 28px rgba(220, 38, 38, 0.28);
+            transform: translateY(-2px);
+            text-decoration: none;
+        }
+
+        .button.secondary,
+        button.secondary {
+            background: var(--primary-soft);
+            border: 1px solid var(--line);
+            color: var(--text);
+        }
+
+        .button.secondary:hover,
+        button.secondary:hover {
+            background: #4a1a22;
+        }
+
+        .button.danger,
+        button.danger {
+            background: var(--danger);
+        }
+
+        .button.danger:hover,
+        button.danger:hover {
+            background: var(--danger-dark);
+        }
+
+        .badge {
+            background: #14251b;
+            border: 1px solid #287144;
+            border-radius: 999px;
+            color: #86efac;
+            display: inline-flex;
+            font-weight: 700;
+            padding: 6px 10px;
+        }
+
+        .meta-list {
+            display: grid;
+            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            margin: 20px 0;
+        }
+
+        .meta-list div {
+            background: var(--panel-strong);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 12px;
+            transition: border-color 180ms ease, transform 180ms ease;
+        }
+
+        .meta-list div:hover {
+            border-color: rgba(239, 68, 68, 0.55);
+            transform: translateY(-2px);
+        }
+
+        .meta-list dt {
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 3px;
+        }
+
+        .meta-list dd {
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .form-panel {
+            max-width: 720px;
+        }
+
+        .field {
+            margin-bottom: 16px;
+        }
+
+        .field label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .field input,
+        .field textarea,
+        .field select {
+            background: #120c0f;
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            color: var(--text);
+            font: inherit;
+            padding: 10px 12px;
+            transition: border-color 180ms ease, box-shadow 180ms ease;
+            width: 100%;
+        }
+
+        .field input:focus,
+        .field textarea:focus,
+        .field select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.16);
+            outline: none;
+        }
+
+        .field input::placeholder,
+        .field textarea::placeholder {
+            color: #8f7a80;
+        }
+
+        .field textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .error-list {
+            color: #fca5a5;
+            margin: 6px 0 0;
+            padding-left: 20px;
+        }
+
+        .danger-panel {
+            border-color: rgba(239, 68, 68, 0.8);
+        }
+
+        .signup-banner,
+        .help-text {
+            color: var(--muted);
+        }
+
+        .help-text {
+            font-size: 14px;
+            margin: 6px 0 0;
+        }
+
+        .help-text ul {
+            margin: 6px 0 0;
+            padding-left: 20px;
+        }
+
+        .signup-banner {
+            background: var(--primary-soft);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            margin-bottom: 18px;
+            padding: 12px 14px;
+        }
+
+        ::selection {
+            background: var(--primary);
+            color: #ffffff;
+        }
+
+        @keyframes pageEnter {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes cardEnter {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes headerGlow {
+            0%,
+            100% {
+                box-shadow: 0 8px 30px rgba(0, 0, 0, 0.22);
+            }
+
+            50% {
+                box-shadow: 0 10px 34px rgba(220, 38, 38, 0.18);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 1ms !important;
+                animation-iteration-count: 1 !important;
+                scroll-behavior: auto !important;
+                transition-duration: 1ms !important;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .nav,
+            .page-head {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .nav-links {
+                justify-content: flex-start;
+            }
+
+            .page-head h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <nav class="nav">
+            <a class="brand" href="{% url 'job_list' %}">Job Portal</a>
+            <div class="nav-links">
+                <a href="{% url 'job_list' %}">Jobs</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'my_jobs' %}">My Jobs</a>
+                    <a href="{% url 'my_applications' %}">My Applications</a>
+                    <a class="button" href="{% url 'job_create' %}">Post Job</a>
+                    <span class="nav-user">{{ user.username }}</span>
+                    <form class="logout-form" method="post" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button class="secondary" type="submit">Logout</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}">Login</a>
+                    <a class="button" href="{% url 'signup' %}">Sign Up</a>
+                {% endif %}
+            </div>
+        </nav>
+    </header>
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

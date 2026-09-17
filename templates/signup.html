@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up | Job Portal{% endblock %}
+
+{% block content %}
+<div class="signup-page">
+    <section class="page-head">
+        <div>
+            <h1>Create Account</h1>
+            <p class="muted">Join the job portal to post jobs or apply for openings.</p>
+        </div>
+        <a class="button secondary" href="{% url 'login' %}">Already have an account?</a>
+    </section>
+
+    <form class="panel form-panel signup-panel" method="post">
+        {% csrf_token %}
+
+        <div class="signup-banner">
+            Sign up with your details and choose the role that fits how you want to use the portal.
+        </div>
+
+        {% if form.non_field_errors %}
+            <ul class="error-list">
+                {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% for field in form %}
+            <div class="field">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                    <div class="help-text">{{ field.help_text }}</div>
+                {% endif %}
+                {% if field.errors %}
+                    <ul class="error-list">
+                        {% for error in field.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <div class="actions">
+            <button type="submit">Create Account</button>
+            <a class="button secondary" href="{% url 'job_list' %}">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

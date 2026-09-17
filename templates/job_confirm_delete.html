@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Delete Job | Job Portal{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>Delete Job</h1>
+        <p class="muted">{{ job.title }} at {{ job.company_name }}</p>
+    </div>
+</section>
+
+<form class="panel form-panel danger-panel" method="post">
+    {% csrf_token %}
+    <h2>Confirm delete</h2>
+    <p>This job post will be removed from the portal.</p>
+
+    <div class="actions">
+        <button class="danger" type="submit">Delete Job</button>
+        <a class="button secondary" href="{% url 'job_detail' job.pk %}">Cancel</a>
+    </div>
+</form>
+{% endblock %}

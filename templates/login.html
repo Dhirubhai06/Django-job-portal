@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Login | Job Portal{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>Login</h1>
+        <p class="muted">Welcome back. Sign in to manage jobs and applications.</p>
+    </div>
+    <a class="button secondary" href="{% url 'signup' %}">Create Account</a>
+</section>
+
+<form class="panel form-panel" method="post">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+        <ul class="error-list">
+            {% for error in form.non_field_errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    {% for field in form %}
+        <div class="field">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+                <ul class="error-list">
+                    {% for error in field.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    {% endfor %}
+
+    {% if next %}
+        <input type="hidden" name="next" value="{{ next }}">
+    {% endif %}
+
+    <div class="actions">
+        <button type="submit">Login</button>
+        <a class="button secondary" href="{% url 'job_list' %}">Cancel</a>
+    </div>
+</form>
+{% endblock %}

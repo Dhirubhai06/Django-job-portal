@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}My Jobs | Job Portal{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>My Jobs</h1>
+        <p class="muted">Manage the job posts you created.</p>
+    </div>
+    <a class="button" href="{% url 'job_create' %}">Post Job</a>
+</section>
+
+<section class="grid">
+    {% for job in jobs %}
+        <article class="job-card">
+            <div>
+                <h2><a href="{% url 'job_detail' job.pk %}">{{ job.title }}</a></h2>
+                <p class="muted">{{ job.company_name }} | Posted {{ job.date_posted|date:"M d, Y" }}</p>
+                <p>{{ job.description|truncatewords:24 }}</p>
+            </div>
+            <div class="actions">
+                <a class="button secondary" href="{% url 'job_detail' job.pk %}">View</a>
+                <a class="button" href="{% url 'job_update' job.pk %}">Edit</a>
+                <a class="button danger" href="{% url 'job_delete' job.pk %}">Delete</a>
+            </div>
+        </article>
+    {% empty %}
+        <div class="empty-state">
+            <h2>No jobs yet.</h2>
+            <p class="muted">Create a job post to start receiving applications.</p>
+            <a class="button" href="{% url 'job_create' %}">Post Job</a>
+        </div>
+    {% endfor %}
+</section>
+{% endblock %}

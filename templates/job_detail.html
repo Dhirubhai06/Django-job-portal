@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}{{ job.title }} | Job Portal{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <h1>{{ job.title }}</h1>
+        <p class="muted">{{ job.company_name }}</p>
+    </div>
+    <a class="button secondary" href="{% url 'job_list' %}">All Jobs</a>
+</section>
+
+<article class="panel">
+    <dl class="meta-list">
+        <div>
+            <dt>Company</dt>
+            <dd>{{ job.company_name }}</dd>
+        </div>
+        <div>
+            <dt>Salary</dt>
+            <dd>{{ job.salary }}</dd>
+        </div>
+        <div>
+            <dt>Posted By</dt>
+            <dd>{{ job.posted_by.username }}</dd>
+        </div>
+        <div>
+            <dt>Date Posted</dt>
+            <dd>{{ job.date_posted|date:"M d, Y" }}</dd>
+        </div>
+    </dl>
+
+    <h2>Description</h2>
+    <div>
+        {{ job.description|linebreaks }}
+    </div>
+
+    <div class="actions">
+        {% if user.is_authenticated %}
+            {% if user == job.posted_by %}
+                <a class="button" href="{% url 'job_update' job.pk %}">Edit Job</a>
+                <a class="button danger" href="{% url 'job_delete' job.pk %}">Delete Job</a>
+            {% elif already_applied %}
+                <span class="badge">Applied</span>
+            {% else %}
+                <form method="post" action="{% url 'apply_to_job' job.pk %}">
+                    {% csrf_token %}
+                    <button type="submit">Apply Now</button>
+                </form>
+            {% endif %}
+        {% else %}
+            <a class="button" href="{% url 'login' %}?next={{ request.path|urlencode }}">Login to Apply</a>
+        {% endif %}
+    </div>
+</article>
+{% endblock %}
