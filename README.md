@@ -55,7 +55,7 @@ django-job-portal/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git
+git clone https://github.com/Dhirubhai06/Django-job-portal/tree/main.git
 ```
 
 ### 2. Open the project
